@@ -1,7 +1,3 @@
-# import time
-# import plotly
-# first you have to load the geojson file
-
 import json
 import os
 import dash
