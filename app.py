@@ -108,6 +108,7 @@ app.layout = html.Div(
             ],
             value="geonode:cpi_layer",
             placeholder="Select a indicator",
+            clearable=False
         ),
         html.Div(
             className="slider-container",
