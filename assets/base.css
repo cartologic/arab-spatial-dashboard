@@ -39,3 +39,7 @@ body {
   justify-content: center;
   align-items: center;
 }
+#layer-selector {
+  width: 200px;
+  margin-left: 125px;
+}
