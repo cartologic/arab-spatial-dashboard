@@ -108,7 +108,7 @@ app.layout = html.Div(
             ],
             value="geonode:cpi_layer",
             placeholder="Select a indicator",
-            clearable=False
+            clearable=False,
         ),
         html.Div(
             className="slider-container",
@@ -209,4 +209,5 @@ def mapbox_map_time_series(selected_year, selected_layer):
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(debug=True, host="0.0.0.0")
+
