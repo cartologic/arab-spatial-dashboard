@@ -1,0 +1,60 @@
+version: '3'
+
+services:
+  postgis:
+    image: cartoview/cartoview-postgis:latest
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: docker
+      POSTGRES_PASS: docker
+      ALLOW_IP_RANGE: 0.0.0.0/0
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U docker -h localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - "pg-data-arab-spatial-dashboard:/var/lib/postgresql"
+  data-dir-conf:
+    image: geonode/geoserver_data:2.14.x
+    restart: on-failure
+    command: /bin/true
+    volumes:
+      - geoserver-data-dir-arab-spatial-dashboard:/geoserver_data/data
+  geoserver:
+    image: cartoview/geoserver_docker:2.14.x
+    depends_on:
+      - postgis
+      - data-dir-conf
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl --silent --fail localhost:8080/geoserver/web/ || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - "geoserver-data-dir-arab-spatial-dashboard:/geoserver_data"
+    environment:
+      CATALINA_OPTS: -Xmx4g -Xms2048m -XX:MaxMetaspaceSize=1024m -XX:SoftRefLRUPolicyMSPerMB=36000 -XX:+UseParallelGC
+  dashboard:
+    image: cartoview/arab-spatial-dashboard:latest
+    command: bash -c "python app.py"
+    restart: unless-stopped
+    hostname: dashboard
+    depends_on:
+      - postgis
+      - geoserver
+    healthcheck:
+      test: ["CMD-SHELL", "curl --silent --fail localhost:8050 || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+    environment:
+      GEOSERVER_LOCATION: http://geoserver:8080/geoserver/wfs
+      MAPBOX_ACCESS_TOKEN: <your_access_token>
+      ALLOW_IP_RANGE: 0.0.0.0/0
+    volumes:
+      - "./:/usr/src/project"
+volumes:
+  geoserver-data-dir-arab-spatial-dashboard:
+  pg-data-arab-spatial-dashboard:
