@@ -1,6 +1,6 @@
 import json
 import os
-
+import pandas
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -9,12 +9,14 @@ import plotly.graph_objs as go
 from dash.dependencies import Input, Output
 from requests.models import PreparedRequest
 
-# external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
+current_dir = os.path.dirname(__file__)
 GEOSERVER_LOCATION = os.getenv(
-    "GEOSERVER_LOCATION", "http://localhost:8080/geoserver14-geonode/wfs"
+    "GEOSERVER_LOCATION", "http://localhost:8080/geoserver/wfs"
 )
-MAPBOX_ACCESS_TOKEN = os.getenv("MAPBOX_ACCESS_TOKEN", "<Your_Access_Token>")
-_CACHE = dict()
+MAPBOX_ACCESS_TOKEN = os.getenv(
+    "MAPBOX_ACCESS_TOKEN",
+    "pk.eyJ1IjoiY2FydG9sb2dpYyIsImEiOiJjanc0a292ejUwdDg0NGFvNjMxNXU4ZTlsIn0.Bes3yfK13D6aOAhoKniOpg",
+)
 
 
 def build_get_features_url(base_url, layername):
@@ -31,13 +33,8 @@ def build_get_features_url(base_url, layername):
 
 
 def get_filtered_data_frame(layername="geonode:cpi_layer", col=None, value=None):
-
-    cache_value = _CACHE.get(layername, None)
-    if cache_value:
-        df = cache_value
-    else:
-        url = build_get_features_url(GEOSERVER_LOCATION, layername)
-        df = gpd.read_file(url)
+    url = build_get_features_url(GEOSERVER_LOCATION, layername)
+    df = gpd.read_file(url)
     if value and col:
         return df.loc[df[col] == value]
     # df["text"] = "code:" + df["iso3"] + "<br>" + "value:" + df["data_value"].astype(str)
@@ -210,4 +207,3 @@ def mapbox_map_time_series(selected_year, selected_layer):
 
 if __name__ == "__main__":
     app.run_server(debug=True, host="0.0.0.0")
-
