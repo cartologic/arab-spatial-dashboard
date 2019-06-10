@@ -128,3 +128,8 @@ t.py
 mapbox.init
 .vscode
 .DS_Store
+plotly\.js/
+
+plotly\.py/
+
+dash-core-components/

@@ -1,6 +1,5 @@
 import json
 import os
-import pandas
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -8,15 +7,37 @@ import geopandas as gpd
 import plotly.graph_objs as go
 from dash.dependencies import Input, Output
 from requests.models import PreparedRequest
+from urllib.parse import urljoin
+from requests.utils import unquote
 
 current_dir = os.path.dirname(__file__)
 GEOSERVER_LOCATION = os.getenv(
-    "GEOSERVER_LOCATION", "http://localhost:8080/geoserver/wfs"
+    "GEOSERVER_LOCATION", "http://localhost:8080/geoserver/"
 )
+WFS_URL = urljoin(GEOSERVER_LOCATION, "wfs")
+WMS_URL = urljoin(GEOSERVER_LOCATION, "wms")
 MAPBOX_ACCESS_TOKEN = os.getenv(
     "MAPBOX_ACCESS_TOKEN",
     "pk.eyJ1IjoiY2FydG9sb2dpYyIsImEiOiJjanc0a292ejUwdDg0NGFvNjMxNXU4ZTlsIn0.Bes3yfK13D6aOAhoKniOpg",
 )
+
+
+def build_wms_layer_url(base_url, layername):
+    params = {
+        "SERVICE": "WMS",
+        "VERSION": "1.1.1",
+        "REQUEST": "GetMap",
+        "FORMAT": "image/png",
+        "TRANSPARENT": "TRUE",
+        "SRS": "EPSG:3857",
+        "bbox": "{bbox-epsg-3857}",
+        "LAYERS": layername,
+        "WIDTH": 256,
+        "HEIGHT": 256,
+    }
+    req = PreparedRequest()
+    req.prepare_url(base_url, params)
+    return req.url
 
 
 def build_get_features_url(base_url, layername):
@@ -29,11 +50,11 @@ def build_get_features_url(base_url, layername):
     }
     req = PreparedRequest()
     req.prepare_url(base_url, params)
-    return req.url
+    return unquote(req.url)
 
 
 def get_filtered_data_frame(layername="geonode:cpi_layer", col=None, value=None):
-    url = build_get_features_url(GEOSERVER_LOCATION, layername)
+    url = build_get_features_url(WFS_URL, layername)
     df = gpd.read_file(url)
     if value and col:
         return df.loc[df[col] == value]
@@ -188,10 +209,10 @@ def mapbox_map_time_series(selected_year, selected_layer):
         mapbox=dict(
             layers=[
                 dict(
-                    sourcetype="geojson",
-                    source=dff_geojson,
-                    type="fill",
-                    color="rgb(49,130,189)",
+                    sourcetype="raster",
+                    source=[build_wms_layer_url(WMS_URL, selected_layer)],
+                    type="raster",
+                    visible=True,
                 )
             ],
             accesstoken=MAPBOX_ACCESS_TOKEN,
