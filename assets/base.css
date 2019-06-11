@@ -20,7 +20,11 @@ body {
 }
 #bar-chart {
   height: 100%;
-  width: 45%;
+  width: 50%;
+}
+#bar-chart2 {
+  height: 100%;
+  width: 50%;
 }
 .text-center {
   text-align: center;
@@ -32,6 +36,7 @@ body {
 .charts-container {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 .slider-container {
   display: flex;
