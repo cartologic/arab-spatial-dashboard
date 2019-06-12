@@ -20,18 +20,19 @@ body {
 }
 #bar-chart {
   height: 100%;
-  width: 45%;
+  width: 50%;
+}
+#bar-chart2 {
+  height: 100%;
+  width: 50%;
 }
 .text-center {
   text-align: center;
 }
-#year_slider {
-  margin: 25px;
-  width: 80%;
-}
 .charts-container {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 .slider-container {
   display: flex;
@@ -40,6 +41,13 @@ body {
   align-items: center;
 }
 #layer-selector {
+  min-width: 200px;
+}
+#year_slider {
   width: 200px;
-  margin-left: 125px;
+}
+.selectors-container {
+  display: flex;
+  flex-grow: 1;
+  justify-content: space-around;
 }
