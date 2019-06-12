@@ -124,10 +124,15 @@ app.layout = html.Div(
         html.Br(),
         html.Br(),
         html.Div(
-            className="charts-container",
-            children=[dcc.Graph(id="bar-chart"), dcc.Graph(id="bar-chart2")],
+            className="base-container",
+            children=[
+                html.Div(
+                    className="charts-container",
+                    children=[dcc.Graph(id="bar-chart"), dcc.Graph(id="bar-chart2")]
+                ),
+                dcc.Graph(id="mapbox-map"),
+            ],
         ),
-        dcc.Graph(id="mapbox-map"),
     ],
 )
 
