@@ -179,23 +179,11 @@ def time_series_bar_chart(selected_year, selected_layer):
     [
         Input("year_slider", "value"),
         Input("layer-selector", "value"),
-        Input("bar-chart", "clickData"),
     ],
 )
-def mapbox_map_time_series(selected_year, selected_layer, selected_data):
+def mapbox_map_time_series(selected_year, selected_layer):
     selected_layer = selected_layer.format(selected_year)
-    country = None
-    # if selected_data:
-    #     country = selected_data["points"][0]["y"]
-
-    # dff = get_filtered_data_frame(selected_layer, col="data_year", value=selected_year)
-    # dff_json = dff.to_json()
-    # dff_geojson = json.loads(dff_json)
     map_data = [go.Scattermapbox(lat=["24.667298"], lon=["25.664063"], mode="markers")]
-    # if country:
-    #     wms_filter = "data_year = '{}' and iso3 = '{}'".format(selected_year, country)
-    # else:
-    #     wms_filter = "data_year = '{}'".format(selected_year)
     map_layout = go.Layout(
         height=600,
         autosize=True,

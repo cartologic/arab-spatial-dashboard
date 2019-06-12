@@ -13,6 +13,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    ports:
+      - "5446:5432"
     volumes:
       - "pg-data-arab-spatial-dashboard:/var/lib/postgresql"
   data-dir-conf:
@@ -44,7 +46,7 @@ services:
     restart: unless-stopped
     hostname: dashboard
     ports:
-      - "8050"
+      - "8050:8050"
     depends_on:
       - postgis
       - geoserver
@@ -54,7 +56,7 @@ services:
       timeout: 10s
       retries: 10
     environment:
-      GEOSERVER_LOCATION: http://geoserver:8080/geoserver/wfs
+      GEOSERVER_LOCATION: http://plotly.cartoview.net/geoserver/
       MAPBOX_ACCESS_TOKEN: pk.eyJ1IjoiY2FydG9sb2dpYyIsImEiOiJjanc0a292ejUwdDg0NGFvNjMxNXU4ZTlsIn0.Bes3yfK13D6aOAhoKniOpg
     volumes:
       - "./:/usr/src/project"
