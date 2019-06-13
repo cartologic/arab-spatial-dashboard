@@ -1,14 +1,16 @@
 # import json
 import os
+from urllib.parse import urljoin
+
 import dash
-import dash_core_components as dcc
 import dash_html_components as html
 import geopandas as gpd
-import plotly.graph_objs as go
 from dash.dependencies import Input, Output
 from requests.models import PreparedRequest
-from urllib.parse import urljoin
 from requests.utils import unquote
+
+import dash_core_components as dcc
+import plotly.graph_objs as go
 
 current_dir = os.path.dirname(__file__)
 GEOSERVER_LOCATION = os.getenv(
@@ -91,46 +93,71 @@ INDICATORS = {"geonode:fiscal_balance_layer": {"title": "Fiscal Balance indicato
 YEARS = [i for i in range(1990, 2015, 1)]
 app = dash.Dash(__name__)
 app.layout = html.Div(
-    className="full-height",
+    className="full-height main",
     children=[
-        html.H1(children="Arab Spatial Dashboard", className="text-center"),
-        html.Br(),
         html.Div(
-            className="selectors-container",
+            className="side-container",
             children=[
-                dcc.Dropdown(
-                    id="layer-selector",
-                    options=[
-                        {
-                            "label": "Fiscal Balance",
-                            "value": "geonode:fiscal_balance_{}",
-                        }
-                    ],
-                    value="geonode:fiscal_balance_{}",
-                    placeholder="Select a indicator",
-                    clearable=False,
-                ),
-                dcc.Dropdown(
-                    id="year_slider",
-                    options=[
-                        {"label": str(year), "value": str(year)} for year in YEARS
-                    ],
-                    value=str(min(YEARS)),
-                    placeholder="Select a Year",
-                    clearable=False,
-                ),
-            ],
-        ),
-        html.Br(),
-        html.Br(),
-        html.Div(
-            className="base-container",
-            children=[
+                html.H1(children="Arab Spatial Dashboard"),
                 html.Div(
-                    className="charts-container",
-                    children=[dcc.Graph(id="bar-chart"), dcc.Graph(id="bar-chart2")]
+                    className="selectors-container",
+                    children=[
+                        html.Div(
+                            className="dropdown-div",
+                            children=[
+                                html.Label(
+                                    className="down-label", children="Indicator:"
+                                ),
+                                dcc.Dropdown(
+                                    id="layer-selector",
+                                    options=[
+                                        {
+                                            "label": "Fiscal Balance",
+                                            "value": "geonode:fiscal_balance_{}",
+                                        }
+                                    ],
+                                    value="geonode:fiscal_balance_{}",
+                                    placeholder="Select a indicator",
+                                    clearable=False,
+                                ),
+                            ],
+                        ),
+                        html.Div(
+                            className="dropdown-div",
+                            children=[
+                                html.Label(className="down-label", children="Year:"),
+                                dcc.Dropdown(
+                                    id="year_slider",
+                                    options=[
+                                        {"label": str(year), "value": str(year)}
+                                        for year in YEARS
+                                    ],
+                                    value=str(min(YEARS)),
+                                    placeholder="Select a Year",
+                                    clearable=False,
+                                ),
+                            ],
+                        ),
+                    ],
                 ),
                 dcc.Graph(id="mapbox-map"),
+            ],
+        ),
+        html.Div(
+            className="side-container",
+            children=[
+                html.Div(
+                    className="base-container",
+                    children=[
+                        html.Div(
+                            className="charts-container",
+                            children=[
+                                dcc.Graph(id="bar-chart"),
+                                dcc.Graph(id="bar-chart2"),
+                            ],
+                        )
+                    ],
+                )
             ],
         ),
     ],
@@ -176,10 +203,7 @@ def time_series_bar_chart(selected_year, selected_layer):
 
 @app.callback(
     Output("mapbox-map", "figure"),
-    [
-        Input("year_slider", "value"),
-        Input("layer-selector", "value"),
-    ],
+    [Input("year_slider", "value"), Input("layer-selector", "value")],
 )
 def mapbox_map_time_series(selected_year, selected_layer):
     selected_layer = selected_layer.format(selected_year)

@@ -16,10 +16,14 @@ body {
   /* height: 600px;
   width: 600px; */
   height: 100%;
-  width: 45%;
+  width: 100%;
 }
 #bar-chart {
   width: 100%;
+}
+.main {
+  display: flex;
+  flex-wrap: wrap;
 }
 #bar-chart2 {
   width: 100%;
@@ -39,20 +43,37 @@ body {
   justify-content: center;
   align-items: center;
 }
+.side-container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 45%;
+  margin: 8px;
+}
 #layer-selector {
-  min-width: 200px;
+  max-width: 200px;
+  flex-grow: 1;
 }
 #year_slider {
-  width: 200px;
+  max-width: 200px;
+  flex-grow: 1;
+}
+.dropdown-div {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
 }
 .selectors-container {
   display: flex;
-  flex-grow: 1;
-  justify-content: space-around;
+  flex-direction: column;
 }
 .base-container {
   display: flex;
 }
 #mapbox-map {
-  height: 50%;
+  display: flex;
+  flex-grow: 1;
+}
+.down-label {
+  width: 100px;
 }
